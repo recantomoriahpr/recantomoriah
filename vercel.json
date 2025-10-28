@@ -2,5 +2,11 @@
   "version": 2,
   "buildCommand": "pnpm run vercel-build",
   "outputDirectory": "dist",
-  "framework": "vite"
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
+  ]
 }
