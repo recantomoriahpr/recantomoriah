@@ -7,12 +7,14 @@
       "@/*": ["./src/*"]
     },
     "jsx": "react-jsx",
-    "types": ["vite/client"],
+    "types": ["node", "vite/client"],
     "noImplicitAny": false,
     "noUnusedParameters": false,
     "skipLibCheck": true,
     "allowJs": true,
     "noUnusedLocals": false,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "moduleResolution": "Bundler",
+    "target": "ES2022"
   }
 }

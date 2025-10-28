@@ -6,15 +6,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.log(`[API] [health]: ${req.method} request`);
 
     if (req.method === 'GET') {
-      const uptime = process.uptime();
-      const timestamp = new Date().toISOString();
-      
       return res.status(200).json({ 
-        ok: true, 
-        uptime,
-        timestamp,
-        status: 'healthy',
-        version: '1.0.0'
+        status: 'ok',
+        ts: new Date().toISOString()
       });
     }
 

@@ -54,7 +54,10 @@ export async function deleteHeroSlide(id: string): Promise<{ ok?: boolean; data:
 }
 
 export async function publishHeroSlides(): Promise<{ ok?: boolean; data: HeroSlideApi[] } | any> {
-  const res = await apiFetch(`/admin/hero-slides/publish`, { method: 'POST' });
+  const res = await apiFetch(`/admin/publish`, { 
+    method: 'POST',
+    body: JSON.stringify({ resource: 'hero_slides', action: 'publish' })
+  });
   return handleJson(res);
 }
 
@@ -110,14 +113,41 @@ export async function updateSiteSettings(payload: SiteSettingsPayload): Promise<
 }
 
 export async function publishSiteSettings(): Promise<{ ok?: boolean; data: SiteSettingsApi } | any> {
-  const res = await apiFetch(`/admin/site-settings/publish`, { method: 'POST' });
+  const res = await apiFetch(`/admin/publish`, { 
+    method: 'POST',
+    body: JSON.stringify({ resource: 'site_settings', action: 'publish' })
+  });
   return handleJson(res);
 }
 
 // Publish all sections at once
 export async function publishAll(): Promise<{ ok?: boolean } | any> {
-  const res = await apiFetch(`/admin/publish-all`, { method: 'POST' });
-  return handleJson(res);
+  const resources = [
+    'site_settings', 'hero_slides', 'benefit_cards', 'testimonials', 
+    'info_cards', 'gallery_albums', 'gallery_images', 'footer_links', 
+    'contact_info', 'schedules'
+  ];
+  
+  const promises = resources.map(resource => 
+    apiFetch(`/admin/publish`, { 
+      method: 'POST',
+      body: JSON.stringify({ resource, action: 'publish' })
+    })
+  );
+  
+  const results = await Promise.allSettled(promises);
+  const responses = await Promise.all(
+    results.map(async (result, index) => {
+      if (result.status === 'fulfilled') {
+        const json = await result.value.json();
+        return { resource: resources[index], ...json };
+      } else {
+        return { resource: resources[index], ok: false, error: result.reason };
+      }
+    })
+  );
+  
+  return { ok: true, results: responses };
 }
 
 // Benefit Cards
@@ -151,7 +181,10 @@ export async function deleteBenefitCard(id: string): Promise<{ ok?: boolean; dat
 }
 
 export async function publishBenefitCards(): Promise<{ ok?: boolean; data: BenefitCardApi[] } | any> {
-  const res = await apiFetch(`/admin/benefit-cards/publish`, { method: 'POST' });
+  const res = await apiFetch(`/admin/publish`, { 
+    method: 'POST',
+    body: JSON.stringify({ resource: 'benefit_cards', action: 'publish' })
+  });
   return handleJson(res);
 }
 
@@ -187,7 +220,10 @@ export async function deleteTestimonial(id: string): Promise<{ ok?: boolean; dat
 }
 
 export async function publishTestimonials(): Promise<{ ok?: boolean; data: TestimonialApi[] } | any> {
-  const res = await apiFetch(`/admin/testimonials/publish`, { method: 'POST' });
+  const res = await apiFetch(`/admin/publish`, { 
+    method: 'POST',
+    body: JSON.stringify({ resource: 'testimonials', action: 'publish' })
+  });
   return handleJson(res);
 }
 
@@ -222,7 +258,10 @@ export async function deleteInfoCard(id: string): Promise<{ ok?: boolean; data: 
 }
 
 export async function publishInfoCards(): Promise<{ ok?: boolean; data: InfoCardApi[] } | any> {
-  const res = await apiFetch(`/admin/info-cards/publish`, { method: 'POST' });
+  const res = await apiFetch(`/admin/publish`, { 
+    method: 'POST',
+    body: JSON.stringify({ resource: 'info_cards', action: 'publish' })
+  });
   return handleJson(res);
 }
 
@@ -256,7 +295,10 @@ export async function deleteGalleryAlbum(id: string): Promise<{ ok?: boolean; da
 }
 
 export async function publishGalleryAlbums(): Promise<{ ok?: boolean; data: GalleryAlbumApi[] } | any> {
-  const res = await apiFetch(`/admin/gallery-albums/publish`, { method: 'POST' });
+  const res = await apiFetch(`/admin/publish`, { 
+    method: 'POST',
+    body: JSON.stringify({ resource: 'gallery_albums', action: 'publish' })
+  });
   return handleJson(res);
 }
 
@@ -294,7 +336,10 @@ export async function deleteGalleryImage(id: string): Promise<{ ok?: boolean; da
 }
 
 export async function publishGalleryImages(): Promise<{ ok?: boolean; data: GalleryImageApi[] } | any> {
-  const res = await apiFetch(`/admin/gallery-images/publish`, { method: 'POST' });
+  const res = await apiFetch(`/admin/publish`, { 
+    method: 'POST',
+    body: JSON.stringify({ resource: 'gallery_images', action: 'publish' })
+  });
   return handleJson(res);
 }
 
@@ -328,7 +373,10 @@ export async function deleteFooterLink(id: string): Promise<{ ok?: boolean; data
 }
 
 export async function publishFooterLinks(): Promise<{ ok?: boolean; data: FooterLinkApi[] } | any> {
-  const res = await apiFetch(`/admin/footer-links/publish`, { method: 'POST' });
+  const res = await apiFetch(`/admin/publish`, { 
+    method: 'POST',
+    body: JSON.stringify({ resource: 'footer_links', action: 'publish' })
+  });
   return handleJson(res);
 }
 
@@ -362,7 +410,10 @@ export async function deleteSchedule(id: string): Promise<{ ok?: boolean; data: 
 }
 
 export async function publishSchedules(): Promise<{ ok?: boolean; data: ScheduleApi[] } | any> {
-  const res = await apiFetch(`/admin/schedules/publish`, { method: 'POST' });
+  const res = await apiFetch(`/admin/publish`, { 
+    method: 'POST',
+    body: JSON.stringify({ resource: 'schedules', action: 'publish' })
+  });
   return handleJson(res);
 }
 
@@ -426,6 +477,9 @@ export async function updateContactInfo(payload: Partial<ContactInfoApi>): Promi
 }
 
 export async function publishContactInfo(): Promise<{ ok?: boolean; data: ContactInfoApi } | any> {
-  const res = await apiFetch(`/admin/contact-info/publish`, { method: 'POST' });
+  const res = await apiFetch(`/admin/publish`, { 
+    method: 'POST',
+    body: JSON.stringify({ resource: 'contact_info', action: 'publish' })
+  });
   return handleJson(res);
 }
