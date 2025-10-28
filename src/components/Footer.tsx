@@ -117,16 +117,7 @@ const Footer = ({ links = [] }: FooterProps) => {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-primary-foreground/20">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-primary-foreground/60 text-sm">
-              © {currentYear} {contactInfo?.footer_copyright_text || 'Recanto Moriah. Todos os direitos reservados.'}
-            </p>
-            <div className="flex items-center space-x-6 text-primary-foreground/60 text-sm">
-              <a href="#" className="hover:text-primary-foreground transition-nature">
-                {contactInfo?.footer_privacy_policy_text || 'Política de Privacidade'}
-              </a>
-              <a href="#" className="hover:text-primary-foreground transition-nature">
-                {contactInfo?.footer_terms_of_use_text || 'Termos de Uso'}
-              </a>
+            <div className="flex items-center space-x-6">
               <Link 
                 to="/admin" 
                 className="flex items-center space-x-1 opacity-30 hover:opacity-60 transition-all duration-300"
@@ -134,6 +125,17 @@ const Footer = ({ links = [] }: FooterProps) => {
               >
                 <Settings className="w-3 h-3" />
               </Link>
+              <p className="text-primary-foreground/60 text-sm">
+                © {currentYear} {contactInfo?.footer_copyright_text || 'Recanto Moriah. Todos os direitos reservados.'}
+              </p>
+            </div>
+            <div className="flex items-center space-x-6 text-primary-foreground/60 text-sm">
+              <a href="#" className="hover:text-primary-foreground transition-nature">
+                {contactInfo?.footer_privacy_policy_text || 'Política de Privacidade'}
+              </a>
+              <a href="#" className="hover:text-primary-foreground transition-nature">
+                {contactInfo?.footer_terms_of_use_text || 'Termos de Uso'}
+              </a>
             </div>
           </div>
         </div>
