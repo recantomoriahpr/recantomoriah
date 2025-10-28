@@ -3,8 +3,8 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 
 const url = process.env.SUPABASE_URL!;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(url, serviceKey);
+const anon = process.env.SUPABASE_ANON_KEY!;
+const supabase = createClient(url, anon);
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
@@ -35,6 +35,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (e: any) {
+    console.error('[site-settings] error:', e);
     return res.status(500).json({ error: e?.message || 'Internal Server Error' });
   }
 }
