@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+  <circle cx="400" cy="400" r="380" fill="none" stroke="#4a5d23" stroke-width="8"/>
+  <circle cx="400" cy="400" r="320" fill="none" stroke="#4a5d23" stroke-width="6"/>
+  <circle cx="400" cy="400" r="260" fill="none" stroke="#4a5d23" stroke-width="4"/>
+  
+  <!-- Tree trunk -->
+  <path d="M 380 520 L 380 400 L 420 400 L 420 520 Q 420 540 410 550 Q 400 560 390 550 Q 380 540 380 520 Z" fill="#4a5d23"/>
+  
+  <!-- Tree branches - radial pattern -->
+  <g stroke="#4a5d23" stroke-width="3" fill="none">
+    <!-- Top branches -->
+    <path d="M 400 350 Q 370 320 350 300"/>
+    <path d="M 400 350 Q 400 290 400 260"/>
+    <path d="M 400 350 Q 430 320 450 300"/>
+    
+    <!-- Middle-upper branches -->
+    <path d="M 390 380 Q 350 360 320 350"/>
+    <path d="M 410 380 Q 450 360 480 350"/>
+    
+    <!-- Middle branches -->
+    <path d="M 385 410 Q 330 400 290 400"/>
+    <path d="M 415 410 Q 470 400 510 400"/>
+    
+    <!-- Middle-lower branches -->
+    <path d="M 390 440 Q 360 450 340 470"/>
+    <path d="M 410 440 Q 440 450 460 470"/>
+    
+    <!-- Lower branches -->
+    <path d="M 395 470 Q 370 490 360 510"/>
+    <path d="M 405 470 Q 430 490 440 510"/>
+  </g>
+  
+  <!-- Leaves - circular pattern -->
+  <g fill="#4a5d23">
+    <!-- Top leaves -->
+    <ellipse cx="340" cy="295" rx="18" ry="25" transform="rotate(-30 340 295)"/>
+    <ellipse cx="400" cy="250" rx="20" ry="28"/>
+    <ellipse cx="460" cy="295" rx="18" ry="25" transform="rotate(30 460 295)"/>
+    
+    <!-- Upper-middle leaves -->
+    <ellipse cx="310" cy="345" rx="16" ry="22" transform="rotate(-45 310 345)"/>
+    <ellipse cx="490" cy="345" rx="16" ry="22" transform="rotate(45 490 345)"/>
+    
+    <!-- Middle leaves -->
+    <ellipse cx="280" cy="395" rx="18" ry="24" transform="rotate(-60 280 395)"/>
+    <ellipse cx="520" cy="395" rx="18" ry="24" transform="rotate(60 520 395)"/>
+    
+    <!-- Lower-middle leaves -->
+    <ellipse cx="330" cy="475" rx="15" ry="20" transform="rotate(-50 330 475)"/>
+    <ellipse cx="470" cy="475" rx="15" ry="20" transform="rotate(50 470 475)"/>
+    
+    <!-- Bottom leaves -->
+    <ellipse cx="350" cy="515" rx="14" ry="18" transform="rotate(-40 350 515)"/>
+    <ellipse cx="450" cy="515" rx="14" ry="18" transform="rotate(40 450 515)"/>
+  </g>
+  
+  <!-- Inner decorative circles -->
+  <circle cx="400" cy="350" r="8" fill="#4a5d23"/>
+  <circle cx="370" cy="380" r="6" fill="#4a5d23"/>
+  <circle cx="430" cy="380" r="6" fill="#4a5d23"/>
+</svg>
