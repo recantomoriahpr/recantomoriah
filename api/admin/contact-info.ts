@@ -1,17 +1,13 @@
 // api/admin/contact-info.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { createClient } from '@supabase/supabase-js';
-
-const url = process.env.SUPABASE_URL!;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(url, serviceKey);
+import { supabaseAdmin } from '../../src/server/supabase';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     console.log(`[API] [admin/contact-info]: ${req.method} request`);
 
     if (req.method === 'GET') {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('contact_info')
         .select('*')
         .is('deleted_at', null)
@@ -30,7 +26,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const payload = await req.body;
       console.log(`[API] [admin/contact-info]: PUT payload:`, payload);
       
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('contact_info')
         .upsert(payload)
         .select('*')

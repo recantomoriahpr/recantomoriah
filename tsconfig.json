@@ -6,15 +6,17 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "jsx": "react-jsx",
-    "types": ["node", "vite/client"],
-    "noImplicitAny": false,
-    "noUnusedParameters": false,
+    "types": ["node"],
+    "strict": true,
     "skipLibCheck": true,
     "allowJs": true,
+    "noImplicitAny": false,
+    "noUnusedParameters": false,
     "noUnusedLocals": false,
-    "strictNullChecks": false,
-    "moduleResolution": "Bundler",
-    "target": "ES2022"
+    "strictNullChecks": false
   }
 }

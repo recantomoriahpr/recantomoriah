@@ -1,10 +1,6 @@
 // api/admin/[resource]/[id].ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { createClient } from '@supabase/supabase-js';
-
-const url = process.env.SUPABASE_URL!;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(url, serviceKey);
+import { supabaseAdmin } from '../../../src/server/supabase';
 
 // Mapeamento de recursos para tabelas
 const resourceMap: Record<string, string> = {
@@ -39,7 +35,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const payload = req.body;
       console.log(`[API] [admin/${resource}/${id}]: PUT payload:`, payload);
       
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from(tableName)
         .update(payload)
         .eq('id', id)
@@ -54,7 +50,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     if (req.method === 'DELETE') {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from(tableName)
         .update({ deleted_at: new Date().toISOString() })
         .eq('id', id)

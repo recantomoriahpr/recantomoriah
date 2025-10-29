@@ -1,10 +1,6 @@
 // api/admin/upload.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { createClient } from '@supabase/supabase-js';
-
-const url = process.env.SUPABASE_URL!;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(url, serviceKey);
+// import { supabaseAdmin } from '../../src/server/supabase'; // Não usado ainda
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {

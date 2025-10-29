@@ -1,10 +1,6 @@
 // api/admin/[resource].ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { createClient } from '@supabase/supabase-js';
-
-const url = process.env.SUPABASE_URL!;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(url, serviceKey);
+import { supabaseAdmin } from '../../src/server/supabase';
 
 // Mapeamento de recursos para tabelas
 const resourceMap: Record<string, string> = {
@@ -34,7 +30,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     if (req.method === 'GET') {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from(tableName)
         .select('*')
         .is('deleted_at', null)
@@ -53,7 +49,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Determine order if not provided
       let orderValue = payload.order;
       if (orderValue === undefined) {
-        const { data: maxRow } = await supabase
+        const { data: maxRow } = await supabaseAdmin
           .from(tableName)
           .select('order')
           .is('deleted_at', null)
@@ -69,7 +65,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         is_published: false,
       };
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from(tableName)
         .insert(insertPayload)
         .select('*')

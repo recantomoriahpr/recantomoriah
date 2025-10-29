@@ -1,10 +1,6 @@
 // api/admin/publish.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { createClient } from '@supabase/supabase-js';
-
-const url = process.env.SUPABASE_URL!;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(url, serviceKey);
+import { supabaseAdmin } from '../../src/server/supabase';
 
 type Resource =
   | 'benefit_cards'
@@ -39,7 +35,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.log(`[API] [admin/publish]: ${action} ${resource}${id ? ` (id: ${id})` : ''}`);
 
     const isPublished = action === 'publish';
-    let query = supabase.from(resource).update({ is_published: isPublished });
+    let query = supabaseAdmin.from(resource).update({ is_published: isPublished });
 
     // Se ID foi fornecido, atualizar apenas esse item
     if (id) {
