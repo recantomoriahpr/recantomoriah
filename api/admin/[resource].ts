@@ -1,6 +1,12 @@
 // api/admin/[resource].ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { supabaseAdmin } from '../../src/server/supabase';
+import { createClient } from '@supabase/supabase-js';
+
+const getSupabaseClient = () => {
+  const url = process.env.SUPABASE_URL || '';
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || '';
+  return createClient(url, key);
+};
 
 // Mapeamento de recursos para tabelas
 const resourceMap: Record<string, string> = {
@@ -17,6 +23,7 @@ const resourceMap: Record<string, string> = {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
+    const supabase = getSupabaseClient();
     const { resource } = req.query;
     console.log(`[API] [admin/${resource}]: ${req.method} request`);
 
@@ -30,7 +37,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     if (req.method === 'GET') {
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await supabase
         .from(tableName)
         .select('*')
         .is('deleted_at', null)
@@ -49,7 +56,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Determine order if not provided
       let orderValue = payload.order;
       if (orderValue === undefined) {
-        const { data: maxRow } = await supabaseAdmin
+        const { data: maxRow } = await supabase
           .from(tableName)
           .select('order')
           .is('deleted_at', null)
@@ -65,7 +72,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         is_published: false,
       };
 
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await supabase
         .from(tableName)
         .insert(insertPayload)
         .select('*')

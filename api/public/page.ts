@@ -1,30 +1,37 @@
 // api/public/page.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { supabaseAnon } from '../../src/server/supabase';
+import { createClient } from '@supabase/supabase-js';
+
+const getSupabaseClient = () => {
+  const url = process.env.SUPABASE_URL || '';
+  const key = process.env.SUPABASE_ANON_KEY || '';
+  return createClient(url, key);
+};
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
+    const supabase = getSupabaseClient();
     const [siteSettings, heroSlides, benefitCards, albums, images, testimonials, infoCards, contacts, schedules, footerLinks, contactInfo] = await Promise.all([
-      supabaseAnon
+      supabase
         .from('site_settings')
         .select('*')
         .eq('is_published', true)
         .is('deleted_at', null)
         .order('published_at', { ascending: false, nullsFirst: false })
         .limit(1),
-      supabaseAnon
+      supabase
         .from('hero_slides')
         .select('*')
         .eq('is_published', true)
         .is('deleted_at', null)
         .order('order', { ascending: true }),
-      supabaseAnon
+      supabase
         .from('benefit_cards')
         .select('*')
         .eq('is_published', true)
         .is('deleted_at', null)
         .order('order', { ascending: true }),
-      supabaseAnon
+      supabase
         .from('gallery_albums')
         .select('*')
         .eq('is_published', true)
@@ -32,7 +39,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .order('order', { ascending: true }),
       (async () => {
         // Tentar com colunas de vídeo e external_link primeiro
-        const withVideo = await supabaseAnon
+        const withVideo = await supabase
           .from('gallery_images')
           .select('id, album_id, url, alt, caption, "order", is_published, created_at, updated_at, deleted_at, video_url, video_id, is_video, external_link')
           .eq('is_published', true)
@@ -41,7 +48,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         
         // Se der erro 42703 (coluna não existe), tentar sem colunas de vídeo
         if (withVideo.error && withVideo.error.code === '42703') {
-          const fallback = await supabaseAnon
+          const fallback = await supabase
             .from('gallery_images')
             .select('id, album_id, url, alt, caption, "order", is_published, created_at, updated_at, deleted_at')
             .eq('is_published', true)
@@ -52,37 +59,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         
         return withVideo;
       })(),
-      supabaseAnon
+      supabase
         .from('testimonials')
         .select('*')
         .eq('is_published', true)
         .is('deleted_at', null)
         .order('order', { ascending: true }),
-      supabaseAnon
+      supabase
         .from('info_cards')
         .select('*')
         .eq('is_published', true)
         .is('deleted_at', null)
         .order('order', { ascending: true }),
-      supabaseAnon
+      supabase
         .from('contacts')
         .select('*')
         .eq('is_published', true)
         .is('deleted_at', null)
         .order('created_at', { ascending: false }),
-      supabaseAnon
+      supabase
         .from('schedules')
         .select('*')
         .eq('is_published', true)
         .is('deleted_at', null)
         .order('order', { ascending: true }),
-      supabaseAnon
+      supabase
         .from('footer_links')
         .select('*')
         .eq('is_published', true)
         .is('deleted_at', null)
         .order('order', { ascending: true }),
-      supabaseAnon
+      supabase
         .from('contact_info')
         .select('*')
         .eq('is_published', true)

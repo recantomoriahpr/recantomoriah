@@ -1,16 +1,20 @@
 // api/diag.ts
 // Endpoint de diagnóstico para verificar configuração de ambiente
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { env } from '../src/server/env';
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
   try {
+    const SUPABASE_URL = process.env.SUPABASE_URL || '';
+    const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
+    const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+    const NODE_ENV = process.env.NODE_ENV || 'production';
+    
     return res.status(200).json({
       ok: true,
-      nodeEnv: env.NODE_ENV,
-      hasSupabaseUrl: Boolean(env.SUPABASE_URL),
-      hasAnonKey: Boolean(env.SUPABASE_ANON_KEY),
-      hasServiceRole: Boolean(env.SUPABASE_SERVICE_ROLE_KEY),
+      nodeEnv: NODE_ENV,
+      hasSupabaseUrl: Boolean(SUPABASE_URL),
+      hasAnonKey: Boolean(SUPABASE_ANON_KEY),
+      hasServiceRole: Boolean(SUPABASE_SERVICE_ROLE_KEY),
       ts: new Date().toISOString()
     });
   } catch (e: any) {

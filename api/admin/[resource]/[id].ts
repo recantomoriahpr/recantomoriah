@@ -1,6 +1,12 @@
 // api/admin/[resource]/[id].ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { supabaseAdmin } from '../../../src/server/supabase';
+import { createClient } from '@supabase/supabase-js';
+
+const getSupabaseClient = () => {
+  const url = process.env.SUPABASE_URL || '';
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || '';
+  return createClient(url, key);
+};
 
 // Mapeamento de recursos para tabelas
 const resourceMap: Record<string, string> = {
@@ -15,6 +21,7 @@ const resourceMap: Record<string, string> = {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
+    const supabase = getSupabaseClient();
     const { resource, id } = req.query;
     console.log(`[API] [admin/${resource}/${id}]: ${req.method} request`);
 
@@ -35,7 +42,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const payload = req.body;
       console.log(`[API] [admin/${resource}/${id}]: PUT payload:`, payload);
       
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await supabase
         .from(tableName)
         .update(payload)
         .eq('id', id)
@@ -50,7 +57,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     if (req.method === 'DELETE') {
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await supabase
         .from(tableName)
         .update({ deleted_at: new Date().toISOString() })
         .eq('id', id)

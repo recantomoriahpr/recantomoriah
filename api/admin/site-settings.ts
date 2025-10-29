@@ -1,11 +1,19 @@
 // api/admin/site-settings.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { supabaseAdmin } from '../../src/server/supabase';
+import { createClient } from '@supabase/supabase-js';
+
+const getSupabaseClient = () => {
+  const url = process.env.SUPABASE_URL || '';
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || '';
+  return createClient(url, key);
+};
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
+    const supabase = getSupabaseClient();
+    
     if (req.method === 'GET') {
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await supabase
         .from('site_settings')
         .select('*')
         .is('deleted_at', null)
@@ -19,7 +27,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (req.method === 'PUT') {
       const payload = req.body;
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await supabase
         .from('site_settings')
         .upsert(payload)
         .select('*')
