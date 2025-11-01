@@ -1,3 +1,13 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json"
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/**/*.ts": { "runtime": "nodejs20.x" },
+    "api/**/*.js": { "runtime": "nodejs20.x" }
+  },
+  "rewrites": [
+    { "source": "/api/:match*", "destination": "/api/:match*" },
+    { "source": "/(favicon.ico|robots.txt|sitemap.xml)", "destination": "/$1" },
+    { "source": "/assets/:match*", "destination": "/assets/:match*" },
+    { "source": "/:match*", "destination": "/" }
+  ]
 }
