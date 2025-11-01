@@ -10,28 +10,6 @@ export type Slide = {
   cta_link?: string | null;
 };
 
-// Fallback slides using public image URLs
-const fallbackSlides: Slide[] = [
-  {
-    image_url: 'https://picsum.photos/1200/600?random=1',
-    title: 'Recanto Moriah',
-    subtitle: 'O lugar perfeito para seu retiro ou casamento dos sonhos',
-    cta_text: 'Solicitar Orçamento',
-  },
-  {
-    image_url: 'https://picsum.photos/1200/600?random=2',
-    title: 'Cerimônias Inesquecíveis',
-    subtitle: 'Natureza, conforto e estrutura completa para receber seu evento especial',
-    cta_text: 'Solicitar Orçamento',
-  },
-  {
-    image_url: 'https://picsum.photos/1200/600?random=3',
-    title: 'Acomodações Premium',
-    subtitle: 'Conforto e tranquilidade para você e seus convidados',
-    cta_text: 'Solicitar Orçamento',
-  },
-];
-
 interface HeroCarouselProps {
   slides?: Slide[];
   onContactClick?: () => void;
@@ -40,7 +18,15 @@ interface HeroCarouselProps {
 const HeroCarousel = ({ slides = [], onContactClick }: HeroCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const slidesToUse: Slide[] = slides.length ? slides : fallbackSlides;
+  // Usar slides da API ou placeholder local se vazio
+  const slidesToUse: Slide[] = slides.length > 0 ? slides : [
+    {
+      image_url: '/placeholder.svg',
+      title: 'Recanto Moriah',
+      subtitle: 'Configure os slides do carrossel no painel administrativo',
+      cta_text: 'Solicitar Orçamento',
+    }
+  ];
 
   useEffect(() => {
     const interval = setInterval(() => {

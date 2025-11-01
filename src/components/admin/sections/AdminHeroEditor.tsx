@@ -63,9 +63,9 @@ const AdminHeroEditor = ({ onChanged }: AdminHeroEditorProps) => {
 
   const addSlide = () => {
     const order = slides.length ? Math.max(...slides.map(s => s.order)) + 1 : 0;
-    // Cria no backend e insere no estado
+    // Cria no backend com placeholder local (usuário deve fazer upload depois)
     createHeroSlide({
-      image_url: `https://picsum.photos/1200/600?random=${Date.now()}`,
+      image_url: '/placeholder.svg',
       title: 'Novo Slide',
       subtitle: 'Descrição do slide',
       cta_text: 'Solicitar Orçamento',
@@ -75,6 +75,7 @@ const AdminHeroEditor = ({ onChanged }: AdminHeroEditorProps) => {
       .then((res) => {
         const created: HeroSlideApi = res?.data ?? res;
         setSlides(prev => [...prev, mapFromApi(created)].sort((a, b) => a.order - b.order));
+        toast({ title: 'Slide criado', description: 'Faça upload de uma imagem para este slide.' });
         onChanged();
       })
       .catch((err) => {
@@ -124,11 +125,21 @@ const AdminHeroEditor = ({ onChanged }: AdminHeroEditorProps) => {
         form.append('file', file);
         const res = await fetch(`${API_BASE}/admin/upload`, { method: 'POST', body: form });
         const data = await res.json();
-        if (!res.ok || data?.error) throw new Error(data?.error || 'Upload failed');
+        
+        // Validar resposta
+        if (!res.ok || !data?.ok || data?.error) {
+          throw new Error(data?.error || `Upload failed with status ${res.status}`);
+        }
+        
+        if (!data.url) {
+          throw new Error('Upload response missing URL');
+        }
+        
         const imageUrl: string = data.url;
         updateSlide(slideId, 'image', imageUrl);
         toast({ title: 'Imagem enviada', description: 'Upload concluído com sucesso.' });
       } catch (err: any) {
+        console.error('[AdminHeroEditor] Upload error:', err);
         toast({ title: 'Erro no upload', description: String(err?.message || err), variant: 'destructive' });
       }
     }

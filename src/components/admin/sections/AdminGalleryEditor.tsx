@@ -163,34 +163,39 @@ const AdminGalleryEditor = ({ onChanged }: AdminGalleryEditorProps) => {
       const res = await fetch(`${API_BASE}/admin/upload-multiple`, { method: 'POST', body: form });
       const data = await res.json();
       
-      if (!res.ok || data?.error) throw new Error(data?.error || 'Upload failed');
+      // Validar resposta
+      if (!res.ok || !data?.ok || data?.error) {
+        throw new Error(data?.error || `Upload failed with status ${res.status}`);
+      }
+
+      if (!data.uploads || !Array.isArray(data.uploads)) {
+        throw new Error('Upload response missing uploads array');
+      }
 
       const category = categories.find(c => c.id === categoryId);
       let currentOrder = category ? category.images.length : 0;
       const newImages: GalleryImage[] = [];
 
       // Criar registro no banco para cada imagem bem-sucedida
-      for (const result of data.results || []) {
-        if (result.success) {
-          const filename = result.filename.replace(/\.[^/.]+$/, '');
-          
-          const created = await createGalleryImage({
-            album_id: categoryId,
-            url: result.url,
-            alt: filename,
-            caption: filename,
-            order: currentOrder++,
-          });
+      for (const upload of data.uploads) {
+        const filename = upload.filename.replace(/\.[^/.]+$/, '');
+        
+        const created = await createGalleryImage({
+          album_id: categoryId,
+          url: upload.url,
+          alt: filename,
+          caption: filename,
+          order: currentOrder++,
+        });
 
-          const createdData: GalleryImageApi = created?.data ?? created;
-          newImages.push({
-            id: createdData.id,
-            url: createdData.url ?? '',
-            alt: createdData.alt ?? '',
-            caption: createdData.caption ?? '',
-            order: createdData.order ?? 0,
-          });
-        }
+        const createdData: GalleryImageApi = created?.data ?? created;
+        newImages.push({
+          id: createdData.id,
+          url: createdData.url ?? '',
+          alt: createdData.alt ?? '',
+          caption: createdData.caption ?? '',
+          order: createdData.order ?? 0,
+        });
       }
 
       if (newImages.length > 0) {
@@ -202,7 +207,7 @@ const AdminGalleryEditor = ({ onChanged }: AdminGalleryEditorProps) => {
 
         toast({ 
           title: 'Upload concluído!', 
-          description: `${newImages.length} de ${files.length} imagem(ns) adicionada(s) com sucesso.` 
+          description: `${newImages.length} imagem(ns) adicionada(s) com sucesso.`
         });
         onChanged();
       } else {
