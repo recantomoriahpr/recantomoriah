@@ -22,7 +22,18 @@ export type HeroSlidePayload = Partial<{
 }>;
 
 async function handleJson<T>(res: Response): Promise<T> {
-  const data = await res.json();
+  const ct = res.headers.get('content-type') || '';
+  if (!ct.toLowerCase().startsWith('application/json')) {
+    const text = await res.text().catch(() => '');
+    throw new Error(text || `Unexpected response content-type: ${ct}`);
+  }
+  let data: any = null;
+  try {
+    data = await res.json();
+  } catch (e) {
+    const text = await res.text().catch(() => '');
+    throw new Error(text || 'Failed to parse JSON response');
+  }
   if (!res.ok) throw new Error(data?.error || 'Request failed');
   return data as T;
 }

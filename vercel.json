@@ -1,7 +1,10 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "rewrites": [
     { "source": "/api/:match*", "destination": "/api/:match*" },
+    { "source": "/(favicon.ico|robots.txt|sitemap.xml)", "destination": "/$1" },
+    { "source": "/assets/:match*", "destination": "/assets/:match*" },
     { "source": "/:match*", "destination": "/" }
   ]
 }

@@ -29,7 +29,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const supabase = getSupabaseClient();
-    const bucket = process.env.SUPABASE_BUCKET || 'recanto-moriah';
+    const bucket = process.env.SUPABASE_BUCKET;
+    if (!bucket) {
+      return res.status(500).json({ ok: false, error: 'Missing Supabase env vars' });
+    }
 
     return new Promise<void>((resolve, reject) => {
       const bb = busboy({ headers: req.headers as any });

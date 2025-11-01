@@ -36,6 +36,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(404).json({ ok: false, error: 'Resource not found' });
     }
 
+    if (req.method === 'OPTIONS') {
+      res.setHeader('Allow', 'GET, POST');
+      return res.status(204).end();
+    }
+
     if (req.method === 'GET') {
       const { data, error } = await supabase
         .from(tableName)
@@ -85,7 +90,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json({ ok: true, data });
     }
 
-    return res.status(405).json({ ok: false, error: 'Method not allowed' });
+    res.setHeader('Allow', 'GET, POST');
+    return res.status(405).json({ ok: false, error: 'Method Not Allowed' });
   } catch (e: any) {
     console.error(`[API] [admin/[resource]]: Unexpected error:`, e);
     return res.status(500).json({ ok: false, error: e?.message || 'Internal Server Error' });
