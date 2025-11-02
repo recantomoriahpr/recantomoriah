@@ -56,7 +56,7 @@ let globalData = {
     secondary: '#f4f1e8', 
     accent: '#e8e0d0',
     background: '#fefcf7',
-    fontFamily: 'Inter'
+    fontFamily: 'Resort'
   } as GlobalTheme,
   
   contatos: {

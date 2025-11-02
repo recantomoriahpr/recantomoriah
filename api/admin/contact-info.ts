@@ -10,6 +10,7 @@ const getSupabaseClient = () => {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
+    res.setHeader('Content-Type', 'application/json');
     const supabase = getSupabaseClient();
     console.log(`[API] [admin/contact-info]: ${req.method} request`);
 
@@ -49,6 +50,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ ok: false, error: 'Method not allowed' });
   } catch (e: any) {
     console.error(`[API] [admin/contact-info]: Unexpected error:`, e);
+    res.setHeader('Content-Type', 'application/json');
     return res.status(500).json({ ok: false, error: e?.message || 'Internal Server Error' });
   }
 }

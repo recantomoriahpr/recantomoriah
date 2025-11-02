@@ -1,7 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@font-face {
+  font-family: 'Resort';
+  src: url('/fonts/resort/Resort.woff2') format('woff2'),
+       url('/fonts/resort/Resort.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+ 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
@@ -123,6 +131,7 @@ All colors MUST be HSL.
   }
 
   body {
+    font-family: var(--font-family, 'Resort', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Inter, Arial, sans-serif);
     @apply bg-background text-foreground;
   }
 }

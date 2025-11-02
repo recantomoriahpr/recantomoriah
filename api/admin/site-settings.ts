@@ -10,6 +10,7 @@ const getSupabaseClient = () => {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
+    res.setHeader('Content-Type', 'application/json');
     const supabase = getSupabaseClient();
     
     if (req.method === 'GET') {
@@ -21,7 +22,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .limit(1)
         .maybeSingle();
 
-      if (error) return res.status(500).json({ error: error.message });
+      if (error) return res.status(500).json({ ok: false, error: error.message });
       return res.status(200).json({ ok: true, data });
     }
 
@@ -33,13 +34,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .select('*')
         .single();
 
-      if (error) return res.status(500).json({ error: error.message });
+      if (error) return res.status(500).json({ ok: false, error: error.message });
       return res.status(200).json({ ok: true, data });
     }
 
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ ok: false, error: 'Method not allowed' });
   } catch (e: any) {
     console.error('[site-settings] error:', e);
-    return res.status(500).json({ error: e?.message || 'Internal Server Error' });
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(500).json({ ok: false, error: e?.message || 'Internal Server Error' });
   }
 }

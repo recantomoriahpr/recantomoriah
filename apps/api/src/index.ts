@@ -63,6 +63,50 @@ app.use('/admin', contactInfoRoutes);
 app.use('/admin', schedulesRoutes);
 app.use('/admin', footerLinksRoutes);
 
+// Publish single resource (mirrors Vercel serverless /api/admin/publish)
+type Resource =
+  | 'benefit_cards'
+  | 'contact_info'
+  | 'footer_links'
+  | 'gallery_albums'
+  | 'gallery_images'
+  | 'hero_slides'
+  | 'info_cards'
+  | 'site_settings'
+  | 'testimonials'
+  | 'schedules';
+
+app.post('/admin/publish', async (req, res) => {
+  try {
+    const supabase = getSupabaseService();
+    const { resource, id, action } = req.body as {
+      resource: Resource;
+      id?: string | number;
+      action: 'publish' | 'unpublish';
+    };
+
+    if (!resource || !action) {
+      return res.status(400).json({ ok: false, error: 'Missing resource or action' });
+    }
+
+    const isPublished = action === 'publish';
+    let query = supabase.from(resource).update({ is_published: isPublished });
+    if (id) {
+      query = query.eq('id', id);
+    } else {
+      query = query.is('deleted_at', null);
+    }
+
+    const { data, error } = await query.select('id');
+    if (error) return res.status(500).json({ ok: false, error: error.message });
+
+    const count = data?.length || 0;
+    return res.status(200).json({ ok: true, count, resource, action, id: id || null });
+  } catch (err: any) {
+    return res.status(500).json({ ok: false, error: err?.message || 'Internal Server Error' });
+  }
+});
+
 // Publish all sections at once
 app.post('/admin/publish-all', async (_req, res) => {
   try {

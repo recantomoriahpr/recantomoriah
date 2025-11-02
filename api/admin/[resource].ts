@@ -23,6 +23,7 @@ const resourceMap: Record<string, string> = {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
+    res.setHeader('Content-Type', 'application/json');
     const supabase = getSupabaseClient();
     const { resource } = req.query;
     console.log(`[API] [admin/${resource}]: ${req.method} request`);
@@ -94,6 +95,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ ok: false, error: 'Method Not Allowed' });
   } catch (e: any) {
     console.error(`[API] [admin/[resource]]: Unexpected error:`, e);
+    res.setHeader('Content-Type', 'application/json');
     return res.status(500).json({ ok: false, error: e?.message || 'Internal Server Error' });
   }
 }

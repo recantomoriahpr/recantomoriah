@@ -28,7 +28,7 @@ const Index = () => {
         secondary: s.secondary_color ?? '#f4f1e8',
         accent: s.accent_color ?? '#e8e0d0',
         background: s.background_color ?? '#fefcf7',
-        fontFamily: s.font_family ?? 'Inter',
+        fontFamily: s.font_family ?? 'Resort',
       });
     }
   }, [data?.site_settings]);

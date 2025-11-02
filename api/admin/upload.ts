@@ -25,7 +25,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.log(`[API] [admin/upload]: ${req.method} request`);
 
     if (req.method !== 'POST') {
+      res.setHeader('Content-Type', 'application/json');
       return res.status(405).json({ ok: false, error: 'Method not allowed' });
+    }
+
+    res.setHeader('Content-Type', 'application/json');
+
+    // Validate Content-Type for multipart/form-data
+    const contentType = (req.headers['content-type'] || '').toString();
+    if (!contentType.toLowerCase().startsWith('multipart/form-data')) {
+      return res.status(400).json({ ok: false, error: 'Invalid Content-Type. Expected multipart/form-data' });
     }
 
     const supabase = getSupabaseClient();
@@ -37,9 +46,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return new Promise<void>((resolve, reject) => {
       const bb = busboy({ headers: req.headers as any });
       let fileProcessed = false;
+      const detectedFields = new Set<string>();
 
       bb.on('file', async (fieldname, file, info) => {
         try {
+          detectedFields.add(fieldname);
+          const normalizedField = fieldname === 'image' ? 'file' : fieldname;
+
+          if (normalizedField !== 'file') {
+            // Ignore unexpected file fields
+            console.log(`[API] [admin/upload]: Ignoring file field: ${fieldname}`);
+            file.resume();
+            return;
+          }
+
           const { filename, mimeType } = info;
           
           // Validar tipo de arquivo
@@ -88,7 +108,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               // Obter URL pública
               const { data: publicData } = supabase.storage.from(bucket).getPublicUrl(objectPath);
 
-              console.log(`[API] [admin/upload]: Upload successful: ${publicData.publicUrl}`);
+              console.log(`[API] [admin/upload]: Upload successful for field "${normalizedField}" → ${publicData.publicUrl}`);
 
               res.status(200).json({
                 ok: true,
@@ -113,6 +133,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
 
       bb.on('finish', () => {
+        const fieldNames = Array.from(detectedFields.values());
+        console.log(`[API] [admin/upload]: Detected file fields: ${fieldNames.join(', ') || '(none)'}`);
         if (!fileProcessed) {
           res.status(400).json({ ok: false, error: 'No file uploaded. Expected field name: "file"' });
           resolve();
@@ -129,6 +151,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   } catch (e: any) {
     console.error(`[API] [admin/upload]: Unexpected error:`, e);
+    res.setHeader('Content-Type', 'application/json');
     return res.status(500).json({ ok: false, error: e?.message || 'Internal Server Error' });
   }
 }

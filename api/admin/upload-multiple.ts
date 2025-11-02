@@ -30,6 +30,7 @@ interface UploadResult {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
+    res.setHeader('Content-Type', 'application/json');
     console.log(`[API] [admin/upload-multiple]: ${req.method} request`);
 
     if (req.method !== 'POST') {
@@ -204,6 +205,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   } catch (e: any) {
     console.error(`[API] [admin/upload-multiple]: Unexpected error:`, e);
+    res.setHeader('Content-Type', 'application/json');
     return res.status(500).json({ ok: false, error: e?.message || 'Internal Server Error' });
   }
 }

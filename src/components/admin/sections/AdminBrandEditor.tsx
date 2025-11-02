@@ -49,7 +49,7 @@ const AdminBrandEditor = ({ onChanged }: AdminBrandEditorProps) => {
             secondaryColor: data.secondary_color ?? '#f4f1e8',
             accentColor: data.accent_color ?? '#e8e0d0',
             backgroundColor: data.background_color ?? '#fefcf7',
-            fontFamily: data.font_family ?? 'Inter',
+            fontFamily: data.font_family ?? 'Resort',
           });
           // Apply to global theme for preview
           updateGlobalTheme({
@@ -57,7 +57,7 @@ const AdminBrandEditor = ({ onChanged }: AdminBrandEditorProps) => {
             secondary: data.secondary_color ?? '#f4f1e8',
             accent: data.accent_color ?? '#e8e0d0',
             background: data.background_color ?? '#fefcf7',
-            fontFamily: data.font_family ?? 'Inter',
+            fontFamily: data.font_family ?? 'Resort',
           });
         }
       } catch (err: any) {
@@ -155,6 +155,7 @@ const AdminBrandEditor = ({ onChanged }: AdminBrandEditorProps) => {
   ];
 
   const fontOptions = [
+    'Resort',
     'Inter',
     'Roboto',
     'Open Sans',

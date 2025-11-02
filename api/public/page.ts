@@ -10,6 +10,7 @@ const getSupabaseClient = () => {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
+    res.setHeader('Content-Type', 'application/json');
     const supabase = getSupabaseClient();
     const [siteSettings, heroSlides, benefitCards, albums, images, testimonials, infoCards, contacts, schedules, footerLinks, contactInfo] = await Promise.all([
       supabase
@@ -131,10 +132,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       contact_info: contactInfo.data && contactInfo.data.length ? contactInfo.data[0] : null,
     };
 
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
+    // Desabilitar cache para refletir publicação imediatamente
+    res.setHeader('Cache-Control', 'no-store');
     return res.status(200).json(payload);
   } catch (e: any) {
     console.error('[public/page] unexpected error', e);
+    res.setHeader('Content-Type', 'application/json');
     return res.status(500).json({ error: e?.message || 'Internal Server Error' });
   }
 }
