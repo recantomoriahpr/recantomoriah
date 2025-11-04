@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { LogOut, Save, Eye, Palette, Image, MessageSquare, Info, Mail, Phone, HelpCircle, Scroll } from 'lucide-react';
 import { publishAll } from '@/lib/adminApi';
+import { apiFetch } from '@/lib/api';
 import AdminBrandEditor from '@/components/admin/sections/AdminBrandEditor';
 import AdminHeroEditor from '@/components/admin/sections/AdminHeroEditor';
 import AdminBenefitsEditor from '@/components/admin/sections/AdminBenefitsEditor';
@@ -22,15 +23,20 @@ const AdminDashboard = () => {
   const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
-    // Verificar se está logado
-    const isLoggedIn = localStorage.getItem('adminLoggedIn');
-    if (!isLoggedIn) {
-      navigate('/admin');
-    }
+    // Verificar sessão pelo backend
+    (async () => {
+      try {
+        await apiFetch('/auth/me', { method: 'GET' });
+      } catch {
+        navigate('/admin');
+      }
+    })();
   }, [navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminLoggedIn');
+  const handleLogout = async () => {
+    try {
+      await apiFetch('/auth/logout', { method: 'POST' });
+    } catch {}
     navigate('/admin');
     toast({
       title: "Logout realizado",

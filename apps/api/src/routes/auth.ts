@@ -53,4 +53,13 @@ router.post('/logout', async (_req, res) => {
   return res.json({ success: true });
 });
 
+router.get('/me', async (req, res) => {
+  const access = req.cookies?.[ACCESS_COOKIE];
+  if (!access) {
+    return res.status(401).json({ authenticated: false });
+  }
+  // TODO: validate JWT and return user info
+  return res.json({ authenticated: true });
+});
+
 export default router;

@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { apiFetch } from '@/lib/api';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -17,24 +18,25 @@ const AdminLogin = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulação de login (substituir pela integração Supabase)
-    setTimeout(() => {
-      if (email === 'admin@recantomariah.com' && password === 'admin123') {
-        localStorage.setItem('adminLoggedIn', 'true');
-        toast({
-          title: "Login realizado com sucesso",
-          description: "Bem-vindo ao painel administrativo",
-        });
-        navigate('/admin/dashboard');
-      } else {
-        toast({
-          title: "Erro no login",
-          description: "Email ou senha incorretos",
-          variant: "destructive",
-        });
-      }
+    try {
+      await apiFetch(`/auth/login`, {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
+      toast({
+        title: 'Login realizado com sucesso',
+        description: 'Bem-vindo ao painel administrativo',
+      });
+      navigate('/admin/dashboard');
+    } catch (err) {
+      toast({
+        title: 'Erro no login',
+        description: 'Email ou senha incorretos',
+        variant: 'destructive',
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -53,7 +55,7 @@ const AdminLogin = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@recantomariah.com"
+                placeholder="seu-email@dominio.com"
                 required
               />
             </div>
@@ -76,11 +78,7 @@ const AdminLogin = () => {
               {isLoading ? 'Entrando...' : 'Entrar'}
             </Button>
           </form>
-          <div className="mt-6 text-center text-sm text-muted-foreground">
-            <p>Credenciais de teste:</p>
-            <p>Email: admin@recantomariah.com</p>
-            <p>Senha: admin123</p>
-          </div>
+          
         </CardContent>
       </Card>
     </div>
